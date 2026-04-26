@@ -1,0 +1,11 @@
+{
+  "schema_version": "v1",
+  "name": "oracle-to-mmdb",
+  "version": "0.1.0",
+  "description": "Conservative Oracle-to-MariaDB migration assistant for Spring Boot projects using MyBatis and JPA.",
+  "interface": {
+    "display_name": "Oracle to MariaDB Migrator",
+    "short_description": "Safely refactor Spring Boot persistence code from Oracle to MariaDB.",
+    "default_prompt": "Use the oracle-to-mmdb skill to conservatively migrate a Spring Boot project from Oracle to MariaDB."
+  }
+}
