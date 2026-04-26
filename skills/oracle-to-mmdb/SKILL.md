@@ -12,6 +12,15 @@ description: >
 
 # Oracle -> MariaDB Refactor Skill
 
+## Usage Summary
+
+1. Run discovery against the target Spring Boot project.
+2. Confirm full or partial migration mode.
+3. Confirm the migrated table registry.
+4. Approve one conservative edit batch at a time.
+5. Review `oracle-to-mmdb-report/blocked.md` for manual decisions.
+6. Run compile/tests only after explicit approval.
+
 ## ⛔ HARD GATES — Do Not Cross Without User Confirmation
 
 | Gate | Trigger | Required Response |
