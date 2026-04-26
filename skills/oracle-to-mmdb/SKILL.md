@@ -80,6 +80,8 @@ Full migration skips Phase 0B entirely. Partial migration requires Phase 0B befo
 
 ## Execution Rules
 
+Enterprise conservative mode is the default. Use helper scripts and optional read-only agents for discovery, but perform project edits sequentially from the coordinator. Never edit a SQL statement unless its table classification and conversion rule are both recorded in the current report.
+
 1. Re-read `migration_state.json` at the start of every turn
 2. Max 2 files open simultaneously; state `"Closing [filename] from context"` before opening the next
 3. Processing order: config → entities → repositories → mappers → DAOs → services
@@ -325,3 +327,5 @@ compensating logic, restructure, Saga pattern.
 | `sql-dialect-map.md` | Full SQL conversion table + JPQL portability patterns | Phase 2 |
 | `mybatis-patterns.md` | Split mapper, XML conversions, pagination, selectKey, TypeHandlers | Phase 3A |
 | `jpa-patterns.md` | Entity columns/IDs, @Query patterns, Pageable rules, split repository, schema validation | Phase 3B |
+| `multi-agent-workflow.md` | Read-only agent scopes and report contracts | Discovery |
+| `conservative-edit-policy.md` | Enterprise edit gates and blocked-change rules | Before edits |
