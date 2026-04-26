@@ -1,0 +1,13 @@
+{
+  "name": "oracle-to-mmdb",
+  "version": "0.1.0",
+  "description": "Conservative Oracle-to-MariaDB migration assistant for Spring Boot projects using MyBatis and JPA.",
+  "keywords": [
+    "oracle",
+    "mariadb",
+    "spring-boot",
+    "mybatis",
+    "jpa",
+    "migration"
+  ]
+}
