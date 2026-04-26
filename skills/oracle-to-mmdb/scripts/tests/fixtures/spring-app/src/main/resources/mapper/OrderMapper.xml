@@ -1,0 +1,5 @@
+<mapper namespace="com.example.mapper.OrderMapper">
+  <select id="findActive" resultType="Order">
+    SELECT id, NVL(status, 'NEW') AS status FROM ORDERS WHERE ROWNUM &lt;= 5
+  </select>
+</mapper>
