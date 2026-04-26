@@ -18,7 +18,7 @@ description: >
 |------|---------|-------------------|
 | GATE-0 | Phase 0A complete — file list output | `"proceed"` |
 | GATE-1 | Migration Registry confirmed | `"confirmed"` |
-| GATE-FILE | Each file edit complete — diff summary shown | `"next"` |
+| GATE-BATCH | Before each conservative edit batch | `"apply"` |
 
 Do not batch across gates. Do not continue if the confirmation word has not been typed.
 
@@ -90,11 +90,31 @@ Enterprise conservative mode is the default. Use helper scripts and optional rea
 6. Targeted replacements only — never rewrite entire files
 7. Reserve ~20k tokens as working buffer — save state, output checkpoint message, and stop if approaching limit
 
+Enterprise default: ask for approval before each edit batch, then show a diff summary after every file. Stop immediately if an edit reveals unresolved table ownership, dynamic table names, or cross-database behavior not present in the approved batch.
+
 ---
 
 ## Phase 0A: Discovery
 
 ### 0A.1 Find Oracle candidates
+
+Run script-first discovery:
+
+```bash
+python3 skills/oracle-to-mmdb/scripts/discover.py <spring-boot-project-root>
+```
+
+Use manual `rg` or `grep` checks as fallback validation, not the primary report source.
+
+For large enterprise projects, use read-only discovery agents before editing:
+
+1. Config agent
+2. JPA agent
+3. MyBatis agent
+4. Service/transaction agent
+5. Dialect research agent when target versions are unknown
+
+Load `multi-agent-workflow.md` before dispatching agents. Agents produce reports only; the coordinator performs all edits.
 
 ```bash
 # SQL-level Oracle patterns
@@ -149,6 +169,8 @@ Confirm migrated table list with user. Record confirmed tables under MIGRATED, O
 Apply before touching any query — in MyBatis XML, `@Query`, `@NamedNativeQuery`,
 `EntityManager.createNativeQuery()`, and inline JdbcTemplate SQL equally.
 
+Use `classify_sql.py` logic for every SQL statement. A statement is editable only when classification is `MARIADB` and all applied conversion rules are `safe_auto_convert` or explicitly approved after review.
+
 ```
 FOR each SQL/JPQL statement:
   1. Extract all table names (FROM, JOIN, INTO, UPDATE)
@@ -199,7 +221,7 @@ Present other options (CDC/ETL, keep on Oracle, DB link) only if user asks or sp
 
 See `config-changes.md` for all details and examples.
 
-⛔ **GATE-FILE** after each config file.
+⛔ **GATE-BATCH** before applying approved config changes; show a diff summary after each config file.
 
 ---
 
@@ -211,7 +233,7 @@ All conversion patterns are in `sql-dialect-map.md` — string/date/numeric func
 control flow, aggregation, sequences, pagination, set ops, joins, data types, DML, Oracle hints,
 and JPQL portability rules.
 
-⛔ **GATE-FILE** after each file containing SQL changes.
+⛔ **GATE-BATCH** before applying approved SQL changes; show a diff summary after each changed file.
 
 ---
 
@@ -230,7 +252,7 @@ and JPQL portability rules.
 
 See `mybatis-patterns.md` for all conversion patterns and examples.
 
-⛔ **GATE-FILE** after each mapper file.
+⛔ **GATE-BATCH** before applying approved mapper changes; show a diff summary after each mapper file.
 
 ---
 
@@ -260,7 +282,7 @@ See `mybatis-patterns.md` for all conversion patterns and examples.
 
 See `jpa-patterns.md` for all code patterns and examples.
 
-⛔ **GATE-FILE** after each entity/repository/DAO file.
+⛔ **GATE-BATCH** before applying approved entity/repository/DAO changes; show a diff summary after each file.
 
 ---
 
@@ -275,7 +297,7 @@ grep -n "createNativeQuery\|JdbcTemplate\|ROWNUM\|NVL(\|SYSDATE\|DECODE(\|FROM D
   src/main/java/**/*.java
 ```
 
-⛔ **GATE-FILE** after each file.
+⛔ **GATE-BATCH** before applying approved Java cleanup changes; show a diff summary after each file.
 
 ---
 
