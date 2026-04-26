@@ -1,5 +1,14 @@
 # SQL Dialect Map: Oracle -> MariaDB
 
+## Conservative Automation Safety
+
+| Safety | Meaning |
+|--------|---------|
+| `safe_auto_convert` | The coordinator may edit after table classification and batch approval. |
+| `needs_review` | The coordinator must show the query and proposed rewrite before editing. |
+| `version_dependent` | The dialect research agent must confirm target MariaDB support first. |
+| `do_not_auto_convert` | Report as blocked unless the user explicitly asks for a manual rewrite. |
+
 ## 1. String Functions
 
 | Oracle | MariaDB |
