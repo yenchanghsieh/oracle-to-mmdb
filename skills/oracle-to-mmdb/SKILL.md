@@ -35,7 +35,7 @@ Do not batch across gates. Do not continue if the confirmation word has not been
 
 ## Required First Action — State Initialization
 
-Before any grep, analysis, or code change, create `/tmp/migration_state.json`:
+Before any grep, analysis, or code change, create `oracle-to-mmdb-report/migration_state.json` inside the target project:
 
 ```json
 {
@@ -60,7 +60,19 @@ Before any grep, analysis, or code change, create `/tmp/migration_state.json`:
 }
 ```
 
-Update this file after every action. This is the single source of truth for session recovery.
+Update this file after every action. This repo-local state file is the single source of truth for session recovery; do not rely on agent memory for active migration progress.
+
+Expected report workspace:
+
+```text
+oracle-to-mmdb-report/
+  migration_state.json
+  discovery.json
+  discovery.md
+  migration-registry.json
+  blocked.md
+  test_checklist.md
+```
 
 ---
 
@@ -68,7 +80,7 @@ Update this file after every action. This is the single source of truth for sess
 
 If the session was interrupted:
 
-1. Read `/tmp/migration_state.json`
+1. Read `oracle-to-mmdb-report/migration_state.json`
 2. Report to user: files done / in-progress / pending
 3. Ask: *"Resume from Phase [X] on [in_progress]? Reply 'yes' or 'restart'."*
 4. Do NOT re-run Phase 0A unless state file is missing or user says `"restart"`
@@ -82,7 +94,7 @@ Ask before touching any code:
 > "Has the entire database been migrated to MariaDB, or only specific tables?
 > If partial, please list the migrated tables."
 
-Set `mode` to `"full"` or `"partial"` in `migration_state.json`.
+Set `mode` to `"full"` or `"partial"` in `oracle-to-mmdb-report/migration_state.json`.
 Full migration skips Phase 0B entirely. Partial migration requires Phase 0B before any edits.
 
 ---
@@ -91,7 +103,7 @@ Full migration skips Phase 0B entirely. Partial migration requires Phase 0B befo
 
 Enterprise conservative mode is the default. Use helper scripts and optional read-only agents for discovery, but perform project edits sequentially from the coordinator. Never edit a SQL statement unless its table classification and conversion rule are both recorded in the current report.
 
-1. Re-read `migration_state.json` at the start of every turn
+1. Re-read `oracle-to-mmdb-report/migration_state.json` at the start of every turn
 2. Max 2 files open simultaneously; state `"Closing [filename] from context"` before opening the next
 3. Processing order: config → entities → repositories → mappers → DAOs → services
 4. After each file: update state JSON and show diff summary
@@ -155,11 +167,11 @@ grep -rl --include="*.java" \
   -e "JdbcTemplate" -e "NamedParameterJdbcTemplate" . | head -3   # JdbcTemplate
 ```
 
-Set `persistence_layers` flags in `migration_state.json`. Report detected layers to user.
+Set `persistence_layers` flags in `oracle-to-mmdb-report/migration_state.json`. Report detected layers to user.
 
 ### 0A.3 Categorize and populate pending list
 
-Categorize each candidate file by type and populate `files.pending[]` in `migration_state.json`.
+Categorize each candidate file by type and populate `files.pending[]` in `oracle-to-mmdb-report/migration_state.json`.
 
 ⛔ **GATE-0**: Show full categorized file list. Wait for `"proceed"`.
 
@@ -169,7 +181,7 @@ Categorize each candidate file by type and populate `files.pending[]` in `migrat
 
 ### 0B.1 Build Migration Registry
 
-Confirm migrated table list with user. Record confirmed tables under MIGRATED, ORACLE-ONLY, and CROSS-DB keys in `migration_state.json`.
+Confirm migrated table list with user. Record confirmed tables under MIGRATED, ORACLE-ONLY, and CROSS-DB keys in `oracle-to-mmdb-report/migration_state.json`.
 
 ⛔ **GATE-1**: Show registry. Wait for `"confirmed"`.
 
