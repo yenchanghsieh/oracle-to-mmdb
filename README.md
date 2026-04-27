@@ -18,6 +18,7 @@ The skill is model-neutral. It can run in Claude Code CLI even when your company
 
 ```text
 .claude-plugin/plugin.json
+.claude-plugin/marketplace.json
 .codex-plugin/plugin.json
 skills/oracle-to-mmdb/SKILL.md
 skills/oracle-to-mmdb/references/
@@ -29,6 +30,7 @@ docs/superpowers/plans/
 Key files:
 
 - `.claude-plugin/plugin.json` - Claude Code plugin manifest.
+- `.claude-plugin/marketplace.json` - Claude Code marketplace catalog for installing this plugin.
 - `.codex-plugin/plugin.json` - Codex plugin manifest.
 - `skills/oracle-to-mmdb/SKILL.md` - main skill workflow and hard gates.
 - `skills/oracle-to-mmdb/references/sql-dialect-map.md` - Oracle-to-MariaDB SQL conversion guidance.
@@ -40,7 +42,21 @@ Key files:
 
 ## Claude Code CLI
 
-Claude Code discovers plugin skills from:
+Claude Code installs plugins through a marketplace catalog. Add this repository as a marketplace, then install the plugin from that marketplace:
+
+```text
+/plugin marketplace add https://github.com/yenchanghsieh/oracle-to-mmdb
+/plugin install oracle-to-mmdb@oracle-to-mmdb-marketplace
+```
+
+For a local checkout, use the local repository path instead:
+
+```text
+/plugin marketplace add /path/to/oracle-to-mmdb
+/plugin install oracle-to-mmdb@oracle-to-mmdb-marketplace
+```
+
+After installation, Claude Code discovers plugin skills from:
 
 ```text
 <plugin-root>/skills/<skill-name>/SKILL.md

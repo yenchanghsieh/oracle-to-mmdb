@@ -1,0 +1,26 @@
+{
+  "name": "oracle-to-mmdb-marketplace",
+  "owner": {
+    "name": "yenchanghsieh"
+  },
+  "metadata": {
+    "description": "Oracle-to-MariaDB migration plugins for Claude Code.",
+    "version": "0.1.1"
+  },
+  "plugins": [
+    {
+      "name": "oracle-to-mmdb",
+      "source": "./",
+      "description": "Conservative Oracle-to-MariaDB migration assistant for Spring Boot projects using MyBatis and JPA.",
+      "version": "0.1.1",
+      "category": "migration",
+      "tags": [
+        "oracle",
+        "mariadb",
+        "spring-boot",
+        "mybatis",
+        "jpa"
+      ]
+    }
+  ]
+}
